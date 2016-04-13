@@ -16,4 +16,7 @@ gem 'figaro'
 
 gem 'kristin'
 gem 'libreconv'
-gem 'ruby-filemagic'
+
+group :development do
+  gem "capistrano", "~> 3.4"
+end
