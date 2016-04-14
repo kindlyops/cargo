@@ -37,9 +37,7 @@ class Parser
 
   def convert_to_pdf
     raise InvalidFileType unless allowed_filetypes.include? file_type
-
-    soffice = "/Applications/LibreOffice.app/Contents/MacOS/soffice"
-    Libreconv.convert file_path, file_path_to_pdf, soffice
+    Libreconv.convert file_path, file_path_to_pdf
   end
 
   def convert_to_html
