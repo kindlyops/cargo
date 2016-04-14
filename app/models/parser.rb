@@ -23,10 +23,6 @@ class Parser
     upload_to_s3
 
     {
-      file_path: file_path_for_s3
-    }
-
-    {
       file_path_to_html: file_path_for_s3_html,
       file_path_to_pdf: file_path_for_s3_pdf
     }
