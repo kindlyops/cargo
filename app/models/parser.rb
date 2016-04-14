@@ -25,6 +25,11 @@ class Parser
     {
       file_path: file_path_for_s3
     }
+
+    {
+      file_path_to_html: file_path_for_s3_html,
+      file_path_to_pdf: file_path_for_s3_pdf
+    }
   end
 
   def reader
@@ -45,7 +50,8 @@ class Parser
   end
 
   def upload_to_s3
-    reader.upload_to_s3!(file_path_local: file_path_to_html, file_path_for_s3: file_path_for_s3)
+    reader.upload_to_s3!(file_path_local: file_path_to_html, file_path_for_s3: file_path_for_s3_html)
+    reader.upload_to_s3!(file_path_local: file_path_to_pdf, file_path_for_s3: file_path_for_s3_pdf)
   end
 
   private
@@ -80,8 +86,12 @@ class Parser
       "./#{dir}/#{@uid}.html"
     end
 
-    def file_path_for_s3
+    def file_path_for_s3_html
       "/enlist-parsed-resumes/#{@uid}/#{@uid}.html"
+    end
+
+    def file_path_for_s3_pdf
+      "/enlist-parsed-resumes/#{@uid}/#{@uid}.pdf"
     end
 
     def file_type
