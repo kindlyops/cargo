@@ -45,6 +45,8 @@ class ParserController < ApplicationController
     end
 
     def io_error(error)
+      logger.info error
+
       message = {
         message: "Something went wrong with IO",
         details: error
@@ -54,6 +56,8 @@ class ParserController < ApplicationController
     end
 
     def s3_error(error)
+      logger.info error
+
       message = {
         message: "Something went wrong with S3",
         details: error
