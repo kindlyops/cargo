@@ -20,3 +20,5 @@ gem 'libreconv'
 group :development do
   gem "capistrano", "~> 3.4"
 end
+
+gem "sentry-raven"
