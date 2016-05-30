@@ -110,6 +110,6 @@ class Converter
     end
 
     def already_exists?
-      File.exists? filepath
+      File.exists? file_path
     end
 end
