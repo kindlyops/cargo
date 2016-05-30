@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '4.2.6'
+gem 'rails-api'
 
 group :development, :test do
   gem 'byebug'
@@ -22,3 +23,4 @@ group :development do
 end
 
 gem "sentry-raven"
+gem "lograge"

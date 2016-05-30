@@ -1,4 +1,4 @@
-class Parser
+class Converter
   class InvalidFileType < StandardError; end
 
   require 'fileutils'
@@ -38,7 +38,14 @@ class Parser
 
   def convert_to_pdf
     raise InvalidFileType unless allowed_filetypes.include? file_type
-    Libreconv.convert file_path, file_path_to_pdf
+
+    if Rails.env.production?
+      Libreconv.convert file_path, file_path_to_pdf
+
+    else
+      soffice = "/Applications/LibreOffice.app/Contents/MacOS/soffice"
+      Libreconv.convert file_path, file_path_to_pdf, soffice
+    end
   end
 
   def convert_to_html

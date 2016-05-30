@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ParserControllerTest < ActionController::TestCase
+class ConverterControllerTest < ActionController::TestCase
   # test "the truth" do
   #   assert true
   # end

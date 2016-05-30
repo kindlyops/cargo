@@ -1,36 +1,40 @@
-class ParserController < ApplicationController
-  before_action :authenticate_request
+class ConverterController < ApplicationController
+  before_action :authenticate_request, only: :create
 
   rescue_from IOError, with: :io_error
-  rescue_from Parser::InvalidFileType, with: :invalid_file_type
+  rescue_from Converter::InvalidFileType, with: :invalid_file_type
   rescue_from S3Reader::ObjectDoesNotExist, with: :object_does_not_exist
   rescue_from Aws::S3::Errors::ServiceError, with: :s3_error
 
   before_action :verify_params, only: :create
 
+  def index
+    head :ok
+  end
+
   def create
-    parser = Parser.new(
-      uid: parser_params[:uid],
-      key: parser_params[:key],
-      file_name: parser_params[:file_name],
-      file_ext: parser_params[:file_ext]
+    converter = Converter.new(
+      uid: converter_params[:uid],
+      key: converter_params[:key],
+      file_name: converter_params[:file_name],
+      file_ext: converter_params[:file_ext]
     )
 
-    result = parser.convert!
+    result = converter.convert!
     render json: result.to_json, status: 200
   end
 
   private
-    def parser_params
-      params.require(:parser)
+    def converter_params
+      params.require(:converter)
             .permit(:uid, :file_name, :file_ext, :key)
     end
 
     def verify_params
-      if parser_params[:file_name].blank? or
-          parser_params[:file_ext].blank? or
-          parser_params[:key].blank? or
-          parser_params[:uid].blank?
+      if converter_params[:file_name].blank? or
+          converter_params[:file_ext].blank? or
+          converter_params[:key].blank? or
+          converter_params[:uid].blank?
 
         return render json: { errors: :required_keys_missing }, status: 422
       end
