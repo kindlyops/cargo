@@ -63,7 +63,7 @@ server '159.203.208.58', user: 'root', roles: %w{app web}, other_property: :othe
 
 set :nginx_server_name, 'cargo.enlist.io'
 set :nginx_use_ssl, true
-set :nginx_ssl_cert_local_path, '~/keys/bundle.cer'
-set :nginx_ssl_cert_key_local_path, '~/keys/key.pem'
+set :nginx_ssl_cert_local_path, '/Users/swastik/keys/bundle.cer'
+set :nginx_ssl_cert_key_local_path, '/Users/swastik/keys/key.pem'
 
 set :unicorn_service, "unicorn"
