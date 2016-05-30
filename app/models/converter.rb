@@ -90,11 +90,11 @@ class Converter
     end
 
     def file_path_for_s3_html
-      "/enlist-parsed-resumes/#{@uid}/#{@uid}.html"
+      "/enlist-converted-resumes/#{@uid}/#{@uid}.html"
     end
 
     def file_path_for_s3_pdf
-      "/enlist-parsed-resumes/#{@uid}/#{@uid}.pdf"
+      "/enlist-converted-resumes/#{@uid}/#{@uid}.pdf"
     end
 
     def file_type

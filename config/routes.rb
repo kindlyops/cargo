@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
-  root 'converter#index'
+  root 'app#index'
+
   resources :converter, only: [:create]
+  resources :parser, only: [:create]
 end

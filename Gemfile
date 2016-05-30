@@ -27,3 +27,6 @@ end
 
 gem "sentry-raven"
 gem "lograge"
+gem "sidekiq"
+gem "rest_client"
+gem "hashie"
