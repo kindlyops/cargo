@@ -17,7 +17,7 @@ class Converter
   end
 
   def convert!
-    download_from_s3
+    download_from_s3 unless already_exists?
     convert_to_pdf unless is_pdf_file?
     convert_to_html
     upload_to_s3
@@ -107,5 +107,9 @@ class Converter
 
     def bucket
       ENV['AWS_ATTACHMENTS_BUCKET']
+    end
+
+    def already_exists?
+      File.exists? filepath
     end
 end
