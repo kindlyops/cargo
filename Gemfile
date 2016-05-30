@@ -20,6 +20,9 @@ gem 'libreconv'
 
 group :development do
   gem "capistrano", "~> 3.4"
+  gem "capistrano-rvm"
+  gem 'capistrano-bundler', '~> 1.1.2'
+  gem 'capistrano-unicorn-nginx', '~> 3.2.0'
 end
 
 gem "sentry-raven"
