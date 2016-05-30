@@ -67,5 +67,4 @@ set :nginx_ssl_cert_local_path, '/Users/swastik/keys/bundle.cer'
 set :nginx_ssl_cert_key_local_path, '/Users/swastik/keys/key.pem'
 
 set :unicorn_service, "unicorn"
-set :unicorn_config, "/home/unicorn/unicorn.conf"
-set :unicorn_pid, "/home/unicorn/pids/unicorn.pid"
+set :unicorn_config, "/etc/unicorn.conf"
