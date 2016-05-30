@@ -50,6 +50,7 @@ class ConverterController < ApplicationController
 
     def io_error(error)
       logger.info error
+      Raven.capture_exception(error)
 
       message = {
         message: "Something went wrong with IO",
@@ -61,6 +62,7 @@ class ConverterController < ApplicationController
 
     def s3_error(error)
       logger.info error
+      Raven.capture_exception(error)
 
       message = {
         message: "Something went wrong with S3",
