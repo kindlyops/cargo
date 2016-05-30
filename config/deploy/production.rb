@@ -65,3 +65,5 @@ set :nginx_server_name, 'cargo.enlist.io'
 set :nginx_use_ssl, true
 set :nginx_ssl_cert_local_path, '~/keys/bundle.cer'
 set :nginx_ssl_cert_key_local_path, '~/keys/key.pem'
+
+set :unicorn_service, "unicorn"
