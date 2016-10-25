@@ -39,7 +39,7 @@ class Converter
   end
 
   def convert_to_pdf
-    raise InvalidFileType unless allowed_filetypes.include? file_type
+    raise InvalidFileType unless is_valid_type?
 
     if Rails.env.production?
       Libreconv.convert file_path, file_path_to_pdf
@@ -60,6 +60,15 @@ class Converter
   end
 
   private
+
+    def is_valid_type?
+      allowed_filetypes.include?(file_type) || is_docx?
+    end
+
+    def is_docx?
+      file_type === "application/zip" && File.extname(file_path) == ".docx"
+    end
+
     def create_directory(dir)
       FileUtils.mkdir_p(dir) unless Dir.exists?(dir)
     end
