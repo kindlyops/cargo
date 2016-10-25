@@ -90,6 +90,7 @@ GEM
     mime-types (3.0)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0221)
+    mimemagic (0.3.2)
     mini_portile2 (2.0.0)
     minitest (5.8.4)
     multipart-post (2.0.0)
@@ -178,6 +179,7 @@ DEPENDENCIES
   kristin
   libreconv
   lograge
+  mimemagic
   rails (= 4.2.6)
   rails-api
   rest_client

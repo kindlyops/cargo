@@ -4,6 +4,8 @@ class Converter
   require 'fileutils'
   require 'libreconv'
   require 'kristin'
+  require 'mimemagic'
+  require 'mimemagic/overlay'
 
   def allowed_filetypes
     %w(application/msword application/vnd.openxmlformats-officedocument.wordprocessingml.document)
@@ -98,7 +100,7 @@ class Converter
     end
 
     def file_type
-      IO.popen(["file", "--brief", "--mime-type", file_path], in: :close, err: :close).read.chomp
+      MimeMagic.by_magic(File.open(filepath)).type
     end
 
     def is_pdf_file?
