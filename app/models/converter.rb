@@ -100,7 +100,7 @@ class Converter
     end
 
     def file_type
-      MimeMagic.by_magic(File.open(filepath)).type
+      MimeMagic.by_magic(File.open(file_path)).type
     end
 
     def is_pdf_file?
