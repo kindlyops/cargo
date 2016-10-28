@@ -31,3 +31,6 @@ gem "sidekiq"
 gem "rest_client"
 gem "hashie"
 gem "mimemagic"
+
+# Cors
+gem 'rack-cors', :require => 'rack/cors'
