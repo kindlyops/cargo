@@ -3,4 +3,5 @@ Rails.application.routes.draw do
 
   resources :converter, only: [:create]
   resources :parser, only: [:create]
+  resources :uploader, only: [:create]
 end

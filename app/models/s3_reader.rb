@@ -34,6 +34,9 @@ class S3Reader
   end
 
   def upload_to_s3!(file_path_local:, file_path_for_s3:)
-    resource.bucket(@bucket).object(file_path_for_s3).upload_file(file_path_local)
+    resource
+      .bucket(@bucket)
+      .object(file_path_for_s3)
+      .upload_file(file_path_local, { acl: 'authenticated-read' })
   end
 end
