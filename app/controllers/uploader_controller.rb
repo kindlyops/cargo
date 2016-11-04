@@ -20,6 +20,6 @@ class UploaderController < ApplicationController
   private
 
     def invalid_file_type
-      render json: { errors: "The file type you're trying to convert is not supported" }, status: 422
+      render json: { errors: "The file type you're trying to upload is not supported" }, status: 422
     end
 end
