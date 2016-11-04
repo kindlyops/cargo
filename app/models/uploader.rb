@@ -60,6 +60,6 @@ class Uploader
     end
 
     def file_path_for_s3
-      "/uploads/#{key}/#{@file.original_filename}"
+      @file_path_for_s3 ||= "/uploads/#{key}/#{@file.original_filename}"
     end
 end
