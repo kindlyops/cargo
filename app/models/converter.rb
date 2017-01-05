@@ -8,7 +8,15 @@ class Converter
   require 'mimemagic/overlay'
 
   def allowed_filetypes
+    doc_file_types + text_file_types
+  end
+
+  def doc_file_types
     %w(application/msword application/vnd.openxmlformats-officedocument.wordprocessingml.document)
+  end
+
+  def text_file_types
+    %w(text/plain application/rtf application/x-rtf text/richtext)
   end
 
   def initialize(uid:, file_name:, file_ext:, key:)
@@ -109,7 +117,9 @@ class Converter
     end
 
     def file_type
-      MimeMagic.by_magic(File.open(file_path)).type
+      file = File.open(file_path)
+      mime = MimeMagic.by_magic(file) || MimeMagic.by_path(file_path)
+      mime.type
     end
 
     def is_pdf_file?
