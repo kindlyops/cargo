@@ -53,7 +53,7 @@ class ConverterController < ApplicationController
       Raven.capture_exception(error)
 
       message = {
-        message: "Something went wrong with IO",
+        message: "Something went wrong with reading the file (IO).",
         details: error
       }
 
