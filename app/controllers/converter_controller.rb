@@ -36,16 +36,16 @@ class ConverterController < ApplicationController
           converter_params[:key].blank? or
           converter_params[:uid].blank?
 
-        return render json: { errors: :required_keys_missing }, status: 422
+        return render json: { message: :required_keys_missing }, status: 422
       end
     end
 
     def invalid_file_type
-      render json: { errors: "The file type you're trying to convert is not supported" }, status: 422
+      render json: { message: "The file type you're trying to convert is not supported" }, status: 422
     end
 
     def object_does_not_exist
-      render json: { errors: "The file you're trying to convert does not exist" }, status: 422
+      render json: { message: "The file you're trying to convert does not exist" }, status: 422
     end
 
     def io_error(error)
@@ -86,6 +86,6 @@ class ConverterController < ApplicationController
     end
 
     def unauthorized
-      render json: { error: "You need to be authorized to access this" }, status: 422
+      render json: { message: "You need to be authorized to access this" }, status: 422
     end
 end
