@@ -2,10 +2,8 @@ class Parser
   class InvalidURL < StandardError; end
   class InvalidFile < StandardError; end
 
-  require 'rest_client'
-
-  PROCESSING_URL = "http://processing.resumeparser.com/requestprocessing.html"
-  PROCESSING_KEY = "11f94f1fde6410dbc44448808a10031c"
+  ACCOUNT_ID = '57918929'.freeze
+  SERVICE_KEY = 'kAYOxhXZHxD002Z5JZ38dAP9q2Iaqe3cbn4K3Wx7'.freeze
 
   def initialize(file_name:, key:, uid:)
     @uid = uid || SecureRandom.uuid
@@ -13,75 +11,67 @@ class Parser
     @key = key
   end
 
+  def client
+    Sovren::Client.new(
+      endpoint: 'http://services.resumeparsing.com/ParsingService.asmx?wsdl',
+      account_id: ACCOUNT_ID,
+      service_key: SERVICE_KEY
+    )
+  end
+
   def parse!
     download_s3_file
+    raise InvalidFile if file_is_empty?
 
-    if file_is_empty?
-      raise InvalidFile
-      return
-    end
-
-    res = RestClient.post(PROCESSING_URL, {
-      product_code: PROCESSING_KEY,
-      document_title: @file_name,
-      document: File.new(@filepath, 'rb')
-    })
-
-    json = Hash.from_xml(res.body)
-    code = res.code
+    parsed = client.parse(File.read(@filepath))
 
     {
-      :json => format(json),
-      :code => code
+      json: {
+        contact: parsed.contact_information,
+        employment: parsed.employment_history,
+        education: parsed.education_history
+      }, code: :ok
     }
   end
 
   def download_s3_file
     raise InvalidFile if @file_name.nil?
-    @filepath = "#{Rails.root}/#{file_path}"
+    @filepath = Rails.root.join(file_path)
 
-    S3Reader.new(key: @key, bucket: bucket)
-             .write_to_path!(filepath: @filepath)
+    S3Reader
+      .new(key: @key, bucket: bucket)
+      .write_to_path!(filepath: @filepath)
   end
 
   private
-    def file_is_empty?
-      File.zero?(@filepath)
-    end
 
-    def create_directory(dir)
-      FileUtils.mkdir_p(dir) unless Dir.exists?(dir)
-    end
+  def file_is_empty?
+    File.zero?(@filepath)
+  end
 
-    def dir
-      upper = "cargo-tmp/#{@uid}"
-      inner = "cargo-tmp/#{@uid}/#{@uid}"
+  def create_directory(dir)
+    FileUtils.mkdir_p(dir) unless Dir.exist?(dir)
+  end
 
-      create_directory(upper)
-      create_directory(inner)
+  def dir
+    upper = "cargo-tmp/#{@uid}"
+    inner = "cargo-tmp/#{@uid}/#{@uid}"
 
-      upper
-    end
+    create_directory(upper)
+    create_directory(inner)
 
-    def file_name
-      "#{@uid}.#{@file_ext}"
-    end
+    upper
+  end
 
-    def file_path
-      "./#{dir}/#{file_name}"
-    end
+  def file_name
+    "#{@uid}.#{@file_ext}"
+  end
 
-    def bucket
-      ENV['AWS_ATTACHMENTS_BUCKET']
-    end
+  def file_path
+    "./#{dir}/#{file_name}"
+  end
 
-    def format(response)
-      response.extend Hashie::Extensions::DeepFind
-
-      {
-        first_name: response.deep_find("GivenName"),
-        last_name: response.deep_find("FamilyName"),
-        email: response.deep_find("InternetEmailAddress")
-      }
-    end
+  def bucket
+    ENV['AWS_ATTACHMENTS_BUCKET']
+  end
 end

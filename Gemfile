@@ -8,8 +8,8 @@ group :development, :test do
 end
 
 group :development do
-  gem 'web-console', '~> 2.0'
   gem 'spring'
+  gem 'web-console', '~> 2.0'
 end
 
 gem 'aws-sdk'
@@ -19,18 +19,21 @@ gem 'kristin'
 gem 'libreconv'
 
 group :development do
-  gem "capistrano", "~> 3.4"
-  gem "capistrano-rvm"
+  gem 'capistrano', '~> 3.4'
   gem 'capistrano-bundler', '~> 1.1.2'
+  gem 'capistrano-rvm'
   gem 'capistrano-unicorn-nginx', '~> 3.2.0'
 end
 
-gem "sentry-raven"
-gem "lograge"
-gem "sidekiq"
-gem "rest_client"
-gem "hashie"
-gem "mimemagic"
+gem 'hashie'
+gem 'lograge'
+gem 'mimemagic'
+gem 'rest-client'
+gem 'sentry-raven'
+gem 'sidekiq'
 
 # Cors
-gem 'rack-cors', :require => 'rack/cors'
+gem 'rack-cors', require: 'rack/cors'
+
+# Sovren
+gem 'sovren', git: 'git@github.com:efleming/sovren.git', branch: 'master'
