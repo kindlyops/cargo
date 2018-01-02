@@ -59,7 +59,7 @@ class Converter
   end
 
   def convert_to_html
-    Kristin.convert file_path_to_pdf, file_path_to_html
+    Kristin.convert(file_path_to_pdf, file_path_to_html, { zoom: 1.25 })
   end
 
   def upload_to_s3
