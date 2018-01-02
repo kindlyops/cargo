@@ -50,7 +50,7 @@ class Converter
     raise InvalidFileType unless is_valid_type?
 
     if Rails.env.production?
-      Libreconv.convert file_path, file_path_to_pdf
+      Libreconv.convert file_path, file_path_to_pdf, "soffice"
 
     else
       soffice = "/Applications/LibreOffice.app/Contents/MacOS/soffice"
