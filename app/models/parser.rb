@@ -64,11 +64,15 @@ class Parser
   end
 
   def file_name
-    "#{@uid}.#{@file_ext}"
+    "#{@uid}#{file_ext}"
   end
 
   def file_path
     "./#{dir}/#{file_name}"
+  end
+
+  def file_ext
+    File.extname(@file_name)
   end
 
   def bucket

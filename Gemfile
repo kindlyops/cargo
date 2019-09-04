@@ -37,3 +37,9 @@ gem 'rack-cors', require: 'rack/cors'
 
 # Sovren
 gem 'sovren', git: 'git@github.com:efleming/sovren.git', branch: 'master'
+
+# Rspec
+group :development, :test do
+  gem 'rspec-rails', '~> 3.8'
+  gem 'simplecov', require: false
+end
