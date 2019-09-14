@@ -31,7 +31,7 @@ class S3Reader
     resource
       .bucket(@bucket)
       .object(file_path_for_s3)
-      .upload_file(file_path_local, acl: 'authenticated-read')
+      .upload_file(file_path_local, acl: 'private')
   end
 
   private

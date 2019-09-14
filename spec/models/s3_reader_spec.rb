@@ -81,7 +81,7 @@ RSpec.describe S3Reader do
       expect(Aws::S3::Resource).to receive(:new).and_return(FakeS3Resource.new)
 
       expect_any_instance_of(FakeObject).to(
-        receive(:upload_file).with(filepath, acl: 'authenticated-read')
+        receive(:upload_file).with(filepath, acl: 'private')
       )
 
       subject.upload_to_s3!(
