@@ -2,7 +2,7 @@
 lock '3.4.0'
 
 set :application, 'cargo'
-set :repo_url, 'git@github.com:swastik/cargo.git'
+set :repo_url, 'git@github.com:kindlyops/cargo.git'
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
