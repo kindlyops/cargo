@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.6'
+gem 'rails', '4.2.10'
 gem 'rails-api'
 
 group :development, :test do
@@ -36,7 +36,7 @@ gem 'sidekiq'
 gem 'rack-cors', require: 'rack/cors'
 
 # Sovren
-gem 'sovren', git: 'git@github.com:efleming/sovren.git', branch: 'master'
+gem 'sovren'
 
 # Rspec
 group :development, :test do
