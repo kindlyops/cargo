@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.6'
-gem 'rails-api'
+gem 'rails', '6.0.2'
 
 group :development, :test do
   gem 'byebug'
@@ -9,7 +8,7 @@ end
 
 group :development do
   gem 'spring'
-  gem 'web-console', '~> 2.0'
+  gem 'web-console', '~> 3.5.0'
 end
 
 gem 'aws-sdk'
@@ -31,6 +30,7 @@ gem 'mimemagic'
 gem 'rest-client'
 gem 'sentry-raven'
 gem 'sidekiq'
+gem 'jets', '~> 2.3.8'
 
 # Cors
 gem 'rack-cors', require: 'rack/cors'
