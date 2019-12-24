@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '6.0.2'
+gem 'rails', '5.2.4'
 
 group :development, :test do
   gem 'byebug'
@@ -30,7 +30,7 @@ gem 'mimemagic'
 gem 'rest-client'
 gem 'sentry-raven'
 gem 'sidekiq'
-gem 'jets', '~> 2.3.8'
+gem 'jets'
 
 # Cors
 gem 'rack-cors', require: 'rack/cors'

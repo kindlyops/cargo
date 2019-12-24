@@ -41,3 +41,10 @@ Rails.application.configure do
 
   config.lograge.enabled = true
 end
+
+Jets.application.configure do
+  config.lambda = ActiveSupport::OrderedOptions.new
+  config.lambda.layers = [
+    "arn:aws:lambda:us-east-1:764866452798:layer:libreoffice:8",
+  ]
+end

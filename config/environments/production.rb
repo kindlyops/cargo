@@ -78,3 +78,10 @@ Rails.application.configure do
   # config.active_record.dump_schema_after_migration = false
   config.lograge.enabled = true
 end
+
+Jets.application.configure do
+  config.lambda = ActiveSupport::OrderedOptions.new
+  config.lambda.layers = [
+    "arn:aws:lambda:us-east-1:764866452798:layer:libreoffice:8",
+  ]
+end
