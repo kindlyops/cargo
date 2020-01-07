@@ -23,11 +23,14 @@ Resources:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /parser
-            Method: GET
+            Method: POST
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
           SOVREN_ACCOUNT_ID: 57918929
           SOVREN_SERVICE_KEY: !Ref ServiceKey
+          AUTH_TOKEN: !Ref AuthToken
+          S3_BUCKET: "lambda-testing-cargo"
+          AWS_REGION: "us-east-1"
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function

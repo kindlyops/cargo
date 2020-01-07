@@ -47,7 +47,7 @@ GOOS=linux GOARCH=amd64 go build -o parser/parser ./parser
 **Invoking function locally through local API Gateway**
 
 ```bash
-sam local start-api --parameter-overrides ServiceKey="SOVREN_SERVICE_KEY_GOES_HERE"
+sam local start-api --parameter-overrides ServiceKey="SOVREN_SERVICE_KEY_GOES_HERE" AuthToken="YourAuthTokenHere" Bucket="lambda-testing-cargo" Region="us-east-1"
 ```
 
 If the previous command ran successfully you should now be able to hit the following local endpoint to invoke your function `http://localhost:3000/parser`

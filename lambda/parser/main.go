@@ -15,6 +15,10 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 )
 
 type resumeFormat struct {
@@ -217,6 +221,16 @@ type payload struct {
 	FileBytes string `json:"FileBytes"`
 }
 
+// BodyRequest is our self-made struct to process JSON request from Client
+type BodyRequest struct {
+	Parser struct {
+		UID      string `json:"uid"`
+		Key      string `json:"key"`
+		FileName string `json:"file_name"`
+		FileExt  string `json:"file_ext"`
+	} `json:"parser"`
+}
+
 var (
 	// ErrNon200Response non 200 status code in response
 	ErrNon200Response = errors.New("Non 200 Response found")
@@ -391,12 +405,58 @@ func parseEducationHistory(resume resumeFormat) ([]parsedEducationFormat, error)
 	return parsedEducationData, nil
 }
 
+func downloadFile(key string, fileName string) (string, error) {
+	bucket := os.Getenv("S3_BUCKET")
+	item := key
+
+	// Create temp file
+	file, err := ioutil.TempFile("", fmt.Sprintf("*_%s", fileName))
+	if err != nil {
+		return "Unable to open file", err
+	}
+
+	defer file.Close()
+
+	sess, _ := session.NewSession(&aws.Config{
+		Region: aws.String(os.Getenv("AWS_REGION"))},
+	)
+
+	downloader := s3manager.NewDownloader(sess)
+
+	numBytes, err := downloader.Download(file,
+		&s3.GetObjectInput{
+			Bucket: aws.String(bucket),
+			Key:    aws.String(item),
+		})
+	if err != nil {
+		return fmt.Sprintf("Unable to download file of %d bytes", numBytes), err
+	}
+	return file.Name(), err
+}
+
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-	// TODO: Change to allow post data and download s3 file here
+	bodyRequest := BodyRequest{}
+	requestAuthToken := request.Headers["Authorization"]
 
+	// If the auth token does not match deny the request.
+	if requestAuthToken != fmt.Sprintf("Bearer %s", os.Getenv("AUTH_TOKEN")) {
+		return events.APIGatewayProxyResponse{Body: "Not Authorized", StatusCode: 403}, nil
+	}
+
+	err := json.Unmarshal([]byte(request.Body), &bodyRequest)
+	if err != nil {
+		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 404}, nil
+	}
+
+	fileName, err := downloadFile(bodyRequest.Parser.Key, bodyRequest.Parser.FileName)
+	if err != nil {
+		fmt.Println("Error Downloading file")
+		return events.APIGatewayProxyResponse{Body: "Error Downloading File", StatusCode: 500}, err
+	}
+	fmt.Println(fileName)
 	// Open local file to send to Sovren as base64
-	f, err := os.Open("ResumeSample.doc")
+	f, err := os.Open(fileName)
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, err
 	}
