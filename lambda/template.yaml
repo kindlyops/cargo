@@ -5,6 +5,16 @@ Description: >
 
   SAM template for enlist parser
 
+Parameters:
+  ServiceKey:
+    Type: String
+    Default: ""
+  AuthToken:
+    Type: String
+    Default: ""
+  S3Bucket:
+    Type: String
+    Default: "lambda-testing-cargo"
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
@@ -18,6 +28,15 @@ Resources:
       Handler: parser
       Runtime: go1.x
       Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
+      Policies:
+        - "AWSLambdaExecute"
+        - Statement:
+            - Action:
+                - "s3:GetObject"
+                - "s3:GetObjectACL"
+              Effect: Allow
+              Resource: !Sub "arn:aws:s3:::${S3Bucket}/*"
+          Version: "2012-10-17"
       Events:
         CatchAll:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -29,8 +48,7 @@ Resources:
           SOVREN_ACCOUNT_ID: 57918929
           SOVREN_SERVICE_KEY: !Ref ServiceKey
           AUTH_TOKEN: !Ref AuthToken
-          S3_BUCKET: "lambda-testing-cargo"
-          AWS_REGION: "us-east-1"
+          S3_BUCKET: !Ref S3Bucket
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -42,6 +60,6 @@ Outputs:
   EnlistParserFunction:
     Description: "Enlist parser Lambda Function ARN"
     Value: !GetAtt EnlistParserFunction.Arn
-  EnlistParserFunctionIamRole:
+  EnlistParserFunctionRole:
     Description: "Implicit IAM Role created for enlist parser function"
-    Value: !GetAtt EnlistParserFunctionIamRole.Arn
+    Value: !GetAtt EnlistParserFunctionRole.Arn

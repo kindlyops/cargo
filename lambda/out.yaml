@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'parser
+
+  SAM template for enlist parser
+
+  '
+Parameters:
+  ServiceKey:
+    Type: String
+    Default: ''
+  AuthToken:
+    Type: String
+    Default: ''
+  S3Bucket:
+    Type: String
+    Default: lambda-testing-cargo
+Globals:
+  Function:
+    Timeout: 5
+Resources:
+  EnlistParserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://lambda-testing-cargo/430d62a8a7f689bdc9ceaa3a855b5ec2
+      Handler: parser
+      Runtime: go1.x
+      Tracing: Active
+      Policies:
+      - AWSLambdaExecute
+      - Statement:
+        - Action:
+          - s3:GetObject
+          - s3:GetObjectACL
+          Effect: Allow
+          Resource:
+            Fn::Sub: arn:aws:s3:::${S3Bucket}/*
+        Version: '2012-10-17'
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /parser
+            Method: POST
+      Environment:
+        Variables:
+          SOVREN_ACCOUNT_ID: 57918929
+          SOVREN_SERVICE_KEY:
+            Ref: ServiceKey
+          AUTH_TOKEN:
+            Ref: AuthToken
+          S3_BUCKET:
+            Ref: S3Bucket
+Outputs:
+  EnlistParserAPI:
+    Description: API Gateway endpoint URL for Prod environment for the enlist parser
+      function
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/parser/
+  EnlistParserFunction:
+    Description: Enlist parser Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - EnlistParserFunction
+      - Arn
+  EnlistParserFunctionRole:
+    Description: Implicit IAM Role created for enlist parser function
+    Value:
+      Fn::GetAtt:
+      - EnlistParserFunctionRole
+      - Arn
