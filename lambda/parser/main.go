@@ -134,10 +134,81 @@ type parsedEmploymentFormat struct {
 	CurrentEmployer *string `json:"current_employer"`
 }
 
+type educationInfoFormat struct {
+	Resume struct {
+		Structured struct {
+			EducationHistory struct {
+				SchoolOrInstitution []struct {
+					School []struct {
+						SchoolName *string `json:"SchoolName"`
+					} `json:"School"`
+					PostalAddress *struct {
+						Municipality *string  `json:"Municipality"`
+						Region       []string `json:"Region"`
+						CountryCode  *string  `json:"CountryCode"`
+					} `json:"PostalAddress"`
+					Degree []struct {
+						DegreeType  *string `json:"@degreeType"`
+						DegreeName  *string `json:"DegreeName"`
+						DegreeMajor []*struct {
+							Name []*string `json:"Name"`
+						} `json:"DegreeMajor"`
+						DegreeMinor []*struct {
+							Name []*string `json:"Name"`
+						} `json:"DegreeMinor"`
+						DatesOfAttendance []*struct {
+							StartDate *struct {
+								Year      *string `json:"Year"`
+								YearMonth *string `json:"YearMonth"`
+							} `json:"StartDate"`
+							EndDate *struct {
+								Year      *string `json:"Year"`
+								YearMonth *string `json:"YearMonth"`
+							} `json:"EndDate"`
+						} `json:"DatesOfAttendance"`
+						DegreeDate *struct {
+							Year      *string `json:"Year"`
+							YearMonth *string `json:"YearMonth"`
+						} `json:"DegreeDate"`
+						DegreeMeasure *struct {
+							EducationalMeasure *struct {
+								MeasureValue *struct {
+									StringValue *string `json:"StringValue"`
+								} `json:"MeasureValue"`
+								HighestPossibleValue *struct {
+									StringValue *string `json:"StringValue"`
+								} `json:"HighestPossibleValue"`
+							} `json:"EducationalMeasure"`
+						} `json:"DegreeMeasure"`
+					} `json:"Degree"`
+				} `json:"SchoolOrInstitution"`
+			} `json:"EducationHistory"`
+		} `json:"StructuredXMLResume"`
+	} `json:"Resume"`
+}
+
+type parsedEducationFormat struct {
+	SchoolName *string `json:"school_name"`
+
+	City       *string `json:"city"`
+	State      string  `json:"state"`
+	Country    *string `json:"country"`
+	DegreeType *string `json:"degree_type"`
+	DegreeName *string `json:"degree_name"`
+	Major      *string `json:"major"`
+	Minor      *string `json:"minor"`
+	StartDate  *string `json:"start_date"`
+	EndDate    *string `json:"end_date"`
+	GPA        *string `json:"gpa"`
+	GPAOutOf   *string `json:"gpa_out_of"`
+	Graduated  *string `json:"graduated"`
+}
+
 type parsedDataFormat struct {
 	JSON struct {
-		parsedContactFormat `json:"contact"`
-		Employment          []parsedEmploymentFormat `json:"employment"`
+		Contact    parsedContactFormat      `json:"contact"`
+		Employment []parsedEmploymentFormat `json:"employment"`
+		Education  []parsedEducationFormat  `json:"education"`
 	} `json:"json"`
 	Code int `json:"code"`
 }
@@ -257,6 +328,69 @@ func parseEmploymentHistory(resume resumeFormat) ([]parsedEmploymentFormat, erro
 	return parsedEmploymentData, nil
 }
 
+// Shape contact info to previously used ruby https://github.com/efleming/sovren/blob/master/lib/sovren/education.rb
+func parseEducationHistory(resume resumeFormat) ([]parsedEducationFormat, error) {
+	var educationInfo educationInfoFormat
+
+	// Save Contact Info from Resume
+	err := json.Unmarshal([]byte(resume.Value.Document), &educationInfo)
+	parsedEducationData := make([]parsedEducationFormat, len(educationInfo.Resume.Structured.EducationHistory.SchoolOrInstitution))
+	if err != nil {
+		fmt.Println("Error unmarshalling from resume document", err)
+		return parsedEducationData, nil
+	}
+
+	for index, education := range educationInfo.Resume.Structured.EducationHistory.SchoolOrInstitution {
+		parsedEducationData[index].SchoolName = education.School[0].SchoolName
+
+		if education.PostalAddress != nil {
+			parsedEducationData[index].City = education.PostalAddress.Municipality
+			parsedEducationData[index].State = education.PostalAddress.Region[0]
+			parsedEducationData[index].Country = education.PostalAddress.CountryCode
+		}
+
+		if education.Degree != nil {
+			parsedEducationData[index].DegreeType = education.Degree[0].DegreeType
+			parsedEducationData[index].DegreeName = education.Degree[0].DegreeName
+			if education.Degree[0].DegreeMajor != nil {
+				parsedEducationData[index].Major = education.Degree[0].DegreeMajor[0].Name[0]
+
+			}
+			if education.Degree[0].DegreeMinor != nil {
+				parsedEducationData[index].Minor = education.Degree[0].DegreeMinor[0].Name[0]
+			}
+			if education.Degree[0].DegreeMeasure != nil {
+				parsedEducationData[index].GPA = education.Degree[0].DegreeMeasure.EducationalMeasure.MeasureValue.StringValue
+				parsedEducationData[index].GPAOutOf = education.Degree[0].DegreeMeasure.EducationalMeasure.HighestPossibleValue.StringValue
+			}
+
+			if education.Degree[0].DatesOfAttendance[0].StartDate.Year != nil {
+				parsedEducationData[index].StartDate = education.Degree[0].DatesOfAttendance[0].StartDate.Year
+			} else if education.Degree[0].DatesOfAttendance[0].StartDate.YearMonth != nil {
+				parsedEducationData[index].StartDate = education.Degree[0].DatesOfAttendance[0].StartDate.YearMonth
+			}
+
+			if education.Degree[0].DatesOfAttendance[0].StartDate.Year != nil {
+				parsedEducationData[index].EndDate = education.Degree[0].DatesOfAttendance[0].EndDate.Year
+			} else if education.Degree[0].DatesOfAttendance[0].StartDate.YearMonth != nil {
+				parsedEducationData[index].EndDate = education.Degree[0].DatesOfAttendance[0].EndDate.YearMonth
+			}
+
+			if education.Degree[0].DegreeDate.Year != nil {
+				parsedEducationData[index].Graduated = education.Degree[0].DegreeDate.Year
+			} else if education.Degree[0].DegreeDate.YearMonth != nil {
+				parsedEducationData[index].Graduated = education.Degree[0].DegreeDate.YearMonth
+			}
+		}
+
+		jsonResponse, _ := json.MarshalIndent(parsedEducationData[index], "", "  ")
+		fmt.Println(reflect.TypeOf(parsedEducationData))
+		fmt.Println(string(jsonResponse))
+	}
+
+	return parsedEducationData, nil
+}
+
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	// TODO: Change to allow post data and download s3 file here
@@ -330,9 +464,9 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		// Combine into the response
 		var parsedResponse parsedDataFormat
 		parsedResponse.Code = 200
-		parsedResponse.JSON.parsedContactFormat, err = parseContactInformation(resume)
+		parsedResponse.JSON.Contact, err = parseContactInformation(resume)
 		parsedResponse.JSON.Employment, err = parseEmploymentHistory(resume)
-		//		parsedResponse.JSON.parsedEducationFormat, err = parseEducationHistory(resume)
+		parsedResponse.JSON.Education, err = parseEducationHistory(resume)
 		//fmt.Println(resume.Value.Document)
 		if err != nil {
 			fmt.Println("Error parsing contact information ", err)
