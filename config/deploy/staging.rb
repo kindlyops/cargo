@@ -11,7 +11,7 @@ server '159.203.208.58', user: 'root', roles: %w{app web}
 
 set :deploy_to, '/home/rails/staging'
 set :stage, :staging
-
+set :linked_files, fetch(:linked_files, []).push('config/secrets.yml')
 
 
 # role-based syntax
