@@ -31,6 +31,7 @@ gem 'mimemagic'
 gem 'rest-client'
 gem 'sentry-raven'
 gem 'sidekiq'
+gem 'unicorn'
 
 # Cors
 gem 'rack-cors', require: 'rack/cors'
