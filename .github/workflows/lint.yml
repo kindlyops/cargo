@@ -1,4 +1,4 @@
-name: reviewdog
+name: linters
 
 on: [pull_request]
 jobs:
