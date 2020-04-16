@@ -1,5 +1,5 @@
 GIT
-  remote: git@github.com:efleming/sovren.git
+  remote: https://github.com/efleming/sovren.git
   revision: 77c29fd5cf8d41b37d4fce4de02a9055359eec64
   branch: master
   specs:
@@ -94,7 +94,7 @@ GEM
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     httpclient (2.8.3)
-    httpi (2.4.2)
+    httpi (2.4.4)
       rack
       socksify
     i18n (0.7.0)
