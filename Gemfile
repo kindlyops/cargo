@@ -20,7 +20,7 @@ gem 'libreconv'
 
 group :development do
   gem 'capistrano', '~> 3.4'
-  gem 'capistrano-bundler', '~> 1.1.2'
+  gem 'capistrano-bundler', '~> 1.6.0'
   gem 'capistrano-rvm'
   gem 'capistrano-unicorn-nginx', '~> 3.2.0'
 end
