@@ -19,7 +19,7 @@ gem 'kristin'
 gem 'libreconv'
 
 group :development do
-  gem 'capistrano', '~> 3.4'
+  gem 'capistrano', '~> 3.14'
   gem 'capistrano-bundler', '~> 1.1.2'
   gem 'capistrano-rvm'
   gem 'capistrano-unicorn-nginx', '~> 3.2.0'
