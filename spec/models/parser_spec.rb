@@ -25,13 +25,9 @@ RSpec.describe Parser do
     )
   end
 
-  it 'has a client' do
-    expect(subject.client).to be_kind_of Sovren::Client
-  end
-
   describe 'parse!' do
     it 'works' do
-      expect(Sovren::Client).to(receive(:new).and_return(FakeSovren.new))
+      #expect(Sovren::Client).to(receive(:new).and_return(FakeSovren.new))
 
       fake_s3_reader = double
       expect(fake_s3_reader).to(
