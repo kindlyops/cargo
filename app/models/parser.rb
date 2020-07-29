@@ -26,13 +26,10 @@ class Parser
   def parse!
     download_s3_file
     raise InvalidFile if file_is_empty?
-    file_data = IO.binread(@filepath)
-    revision_date = File.mtime(file_path).to_s[0,10]
+    #revision_date = File.mtime(@filepath).to_s[0,10]
     # Encode the bytes to base64
-    base_64_file = Base64.encode64(file_data)
     data = {
-      "DocumentAsBase64String" => base_64_file,
-      "RevisionDate" => revision_date
+      "DocumentAsBase64String" => Base64.encode64(File.read(@filepath))
        #other options here (see http://documentation.sovren.com/API/Rest/Parsing)
     }.to_json
     uri = URI.parse("https://rest.resumeparsing.com/v9/parser/resume")
