@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'sovren_client'
 
 class FakeSovren
   def parse(file)
@@ -26,8 +27,12 @@ RSpec.describe Parser do
   end
 
   describe 'parse!' do
+    it 'has a client' do
+      expect(subject.client).to be_kind_of SovrenClient
+    end
+
     it 'works' do
-      expect(Sovren::Client).to(receive(:new).and_return(FakeSovren.new))
+      expect(SovrenClient).to(receive(:new).and_return(FakeSovren.new))
 
       fake_s3_reader = double
       expect(fake_s3_reader).to(

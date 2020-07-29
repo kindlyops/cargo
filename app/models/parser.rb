@@ -1,9 +1,3 @@
-require 'uri'
-require 'net/http'
-require 'net/https'
-require 'base64'
-require 'json'
-
 class Parser
   class InvalidURL < StandardError; end
   class InvalidFile < StandardError; end
@@ -15,39 +9,25 @@ class Parser
     @uid = uid || SecureRandom.uuid
     @file_name = file_name
     @key = key
-    @headers = {
-      'Content-Type' => 'application/json',
-      'Accept' => 'application/json',
-      'Sovren-AccountId' => ACCOUNT_ID,
-      'Sovren-ServiceKey' =>  SERVICE_KEY
-    }
+  end
+
+  def client
+    SovrenClient.new(
+      endpoint: 'https://rest.resumeparsing.com/v9/parser/resume',
+      account_id: ACCOUNT_ID,
+      service_key: SERVICE_KEY
+    )
   end
 
   def parse!
     download_s3_file
     raise InvalidFile if file_is_empty?
-    #revision_date = File.mtime(@filepath).to_s[0,10]
-    # Encode the bytes to base64
-    data = {
-      "DocumentAsBase64String" => Base64.encode64(File.read(@filepath))
-       #other options here (see http://documentation.sovren.com/API/Rest/Parsing)
-    }.to_json
-    uri = URI.parse("https://rest.resumeparsing.com/v9/parser/resume")
-    https = Net::HTTP.new(uri.host,uri.port)
-    https.use_ssl = true
-    req = Net::HTTP::Post.new(uri.path, initheader = @headers)
-    req.body = data
-    res = https.request(req)
-    # Parse the response body into an object
-    respObj = JSON.parse(res.body)
-    # Parse the ParsedDocument string into an object (for response properties and types, see http://documentation.sovren.com/API/Rest/Parsing)
-    parsedDoc = JSON.parse(respObj["Value"]["ParsedDocument"])
-
+    parsed = client.parse(File.read(@filepath))
     {
       json: {
-        contact: parsedDoc["Resume"]["StructuredXMLResume"]["ContactInfo"],
-        employment:  parsedDoc["Resume"]["StructuredXMLResume"]["EmploymentHistory"],
-        education:  parsedDoc["Resume"]["StructuredXMLResume"]["EducationHistory"]
+        contact: parsed.contact_information,
+        employment:  parsed.employment_history,
+        education:  parsed.education_history
       }, code: :ok
     }
   end
