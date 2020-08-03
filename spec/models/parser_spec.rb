@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'sovren_client'
 
 class FakeSovren
   def parse(file)
@@ -15,8 +16,8 @@ class FakeSovren
 end
 
 RSpec.describe Parser do
-  let(:filepath) { Rails.root.join('cargo-tmp', 'uid', 'uid.pdf') }
 
+  let(:filepath) { Rails.root.join('spec', 'support', 'resume.pdf') }
   let(:subject) do
     Parser.new(
       file_name: 'file-name.pdf',
@@ -25,26 +26,33 @@ RSpec.describe Parser do
     )
   end
 
-  it 'has a client' do
-    expect(subject.client).to be_kind_of Sovren::Client
+  let(:subject_s3) do
+    S3Reader.new(
+      key: 'key',
+      bucket: 'bucket'
+    )
   end
 
   describe 'parse!' do
+    it 'has a client' do
+      expect(subject.client).to be_kind_of SovrenClient
+    end
+
     it 'works' do
-      expect(Sovren::Client).to(receive(:new).and_return(FakeSovren.new))
+      expect(SovrenClient).to(receive(:new).and_return(SovrenClient.new))
+      expect(Aws::S3::Client).to receive(:new).and_return(FakeS3Client.new)
+      expect(Aws::S3::Resource).to receive(:new).and_return(FakeS3Resource.new)
 
-      fake_s3_reader = double
-      expect(fake_s3_reader).to(
-        receive(:write_to_path!).with(filepath: filepath)
-      )
+      fake_file = FakeFile.new
 
-      expect(S3Reader).to(
-        receive(:new).with(key: 'key', bucket: ENV['AWS_ATTACHMENTS_BUCKET'])
-        .and_return(fake_s3_reader)
+      expect(File).to(
+        receive(:open).with(filepath, 'wb') { |&block| block.call(fake_file) }
       )
 
       expect(File).to receive(:read).and_return(nil)
       expect(File).to receive(:zero?).with(filepath).and_return(false)
+
+      subject_s3.write_to_path!(filepath: filepath)
 
       expect(subject.parse!).to(
         eq({

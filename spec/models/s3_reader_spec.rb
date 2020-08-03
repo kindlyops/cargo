@@ -43,7 +43,7 @@ class FakeFile
 end
 
 RSpec.describe S3Reader do
-  let(:filepath) { Rails.root.join('cargo-tmp', 'uid', 'uid.pdf') }
+  let(:filepath) { Rails.root.join('spec', 'support', 'resume.pdf') }
 
   let(:subject) do
     S3Reader.new(
@@ -85,7 +85,7 @@ RSpec.describe S3Reader do
       )
 
       subject.upload_to_s3!(
-        file_path_local: filepath, file_path_for_s3: '/uploads/tmp/uid.pdf'
+        file_path_local: filepath, file_path_for_s3: '/uploads/tmp/resume.pdf'
       )
     end
   end

@@ -12,8 +12,8 @@ class Parser
   end
 
   def client
-    Sovren::Client.new(
-      endpoint: 'http://services.resumeparsing.com/ParsingService.asmx?wsdl',
+    SovrenClient.new(
+      endpoint: 'https://rest.resumeparsing.com/v9/parser/resume',
       account_id: ACCOUNT_ID,
       service_key: SERVICE_KEY
     )
@@ -22,14 +22,12 @@ class Parser
   def parse!
     download_s3_file
     raise InvalidFile if file_is_empty?
-
     parsed = client.parse(File.read(@filepath))
-
     {
       json: {
         contact: parsed.contact_information,
-        employment: parsed.employment_history,
-        education: parsed.education_history
+        employment:  parsed.employment_history,
+        education:  parsed.education_history
       }, code: :ok
     }
   end
@@ -79,3 +77,4 @@ class Parser
     ENV['AWS_ATTACHMENTS_BUCKET']
   end
 end
+

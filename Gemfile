@@ -43,4 +43,5 @@ gem 'sovren', git: 'https://github.com/efleming/sovren.git', branch: 'master'
 group :development, :test do
   gem 'rspec-rails', '~> 3.8'
   gem 'simplecov', require: false
+  gem 'webmock'
 end
